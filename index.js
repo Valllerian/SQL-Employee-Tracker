@@ -3,6 +3,8 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+require('dotenv').config();
+
 // connecting to the database using env file;
 
 const db = mysql.createConnection(
@@ -22,6 +24,8 @@ const db = mysql.createConnection(
 
 
 // main inquirer function:
+
+mainPrompt();
 
 function mainPrompt() {
 
