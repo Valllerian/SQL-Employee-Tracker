@@ -4,6 +4,7 @@
   "description": "a command-line application from scratch to manage a company's employee database, using Node.js, Inquirer, and MySQL.",
   "main": "index.js",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^8.2.0"
   },
   "devDependencies": {},
