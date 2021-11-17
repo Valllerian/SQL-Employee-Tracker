@@ -35,8 +35,17 @@ function mainPrompt() {
     ])
    
     .then((answers) => {
-
+        if (answers.displayOptions === "View all departments"){
+            viewAllDepartments();
+        }
      })
 };
 
 // write function for each selections;
+
+function viewAllDepartments(){
+    db.query('SELECT * FROM tracker_db.department;', function (err, results) {
+      console.table(results);
+      mainPrompt();
+    });
+  };
