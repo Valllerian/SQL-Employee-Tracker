@@ -125,9 +125,9 @@ function addDepartment(){
 
 //   add a new role to the tracker.role table;
 function addRole(){
-  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
-    let roles = [];
-    results.forEach(results => roles.push({name: results.title})); 
+  db.query('SELECT * FROM tracker_db.department;', function (err, results) {
+    let departments = [];
+    results.forEach(results => departments.push({name: results.name, value: results.id})); 
     return inquirer.prompt([
         // prompting the user to enter the role info;
         {
@@ -141,11 +141,12 @@ function addRole(){
             message: "Enter the role salary! (DECIMAL input)"
         },
         {
-          type: "input",
+          type: "list",
           name: "roleDepartment",
-          choice: roles
+          message:"Select department for the new role.",
+          choices: departments
       }
-      ])})
+      ])
     //   using mysql2 line to insert new role into tracker.role table;
     .then(function (answers) {
     db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [answers.roleTitle, answers.roleSalary, answers.roleDepartment],
@@ -156,6 +157,7 @@ function addRole(){
       };
       mainPrompt();
     });
+  })
 });
 };
 
