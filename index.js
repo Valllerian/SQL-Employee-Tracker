@@ -13,7 +13,8 @@ const db = mysql.createConnection(
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME
-    }
+    },
+    console.log(`Successfully connected to the tracker_db database!`)
   );
   db.connect( (err) => {
     if (err){
@@ -52,8 +53,14 @@ function mainPrompt() {
         };
         if (answers.displayAll === "Add role;"){
             addRole();
-        }
-     })
+        };
+        if (answers.displayAll === "Add employee;"){
+          addEmployee();
+        };
+        if (answers.displayAll === "Update Employee Role;"){
+          updateEmployeeRole();
+        };
+     });
 };
 
 // write function for each prompt;
@@ -122,5 +129,24 @@ function addRole(){
       console.table(results);
       mainPrompt();
     })
+})
+};
+
+function addEmployee(){
+  return inquirer.prompt([
+      // prompting the user to enter the employee name;
+      {
+          type: "input",
+          name: "employeeName",
+          message: "Enter the employee name!"
+      }
+    ])
+  //   using mysql2 line to insert new employee into tracker.employee table;
+  .then(function (answer) {
+  db.query('INSERT INTO employee (name) VALUES (?)', [answer.employeeName],
+  function (err, results) {
+    console.table(results);
+    mainPrompt();
+  })
 })
 };
