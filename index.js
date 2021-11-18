@@ -76,18 +76,23 @@ function viewAllDepartments(){
 
 // View all employees from tracker.employee table;
 function viewAllEmployees(){
-    db.query('SELECT * FROM tracker_db.employee;', 
+    db.query('SELECT id, first_name, last_name FROM tracker_db.employee;', 
     function (err, results) {
       console.table(results);
+      if(err){
+        console.log(err);
+      };
       mainPrompt();
     });
   };
 
 // View all roles from tracker.role table;
 function viewAllRoles(){
-    db.query('SELECT * FROM tracker_db.role;', 
-    function (err, results) {
+    db.query("SELECT id, title, salary, department_id FROM tracker_db.roles;", function (err, results) {
       console.table(results);
+      if(err){
+        console.log(err);
+      };
       mainPrompt();
     });
   };
@@ -107,6 +112,9 @@ function addDepartment(){
     db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName],
     function (err, results) {
       console.table(results);
+      if(err){
+        console.log(err);
+      };
       mainPrompt();
     })
 })
@@ -118,18 +126,31 @@ function addRole(){
         // prompting the user to enter the role name;
         {
             type: "input",
-            name: "roleName",
-            message: "Enter the role name!"
-        }
+            name: "roleTitle",
+            message: "Enter the role title!"
+        },
+        {
+            type: "input",
+            name: "roleSalary",
+            message: "Enter the role salary! (DECIMAL input)"
+        },
+        {
+          type: "input",
+          name: "roleDepartment",
+          message: "Enter the role department! (Reference Department ID)"
+      }
       ])
     //   using mysql2 line to insert new role into tracker.role table;
-    .then(function (answer) {
-    db.query('INSERT INTO role (name) VALUES (?)', [answer.roleName],
+    .then(function (answers) {
+    db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [answers.roleTitle, answers.roleSalary, answers.roleDepartment],
     function (err, results) {
-      console.table(results);
+      console.log(`${answers.roleTitle} has been added to the list.`);
+      if(err){
+        console.log(err);
+      };
       mainPrompt();
-    })
-})
+    });
+});
 };
 
 function addEmployee(){
@@ -139,14 +160,32 @@ function addEmployee(){
           type: "input",
           name: "employeeName",
           message: "Enter the employee name!"
+      },
+      {
+        type: "input",
+        name: "employeeLastName",
+        message: "Enter the employee last name!"
+      },
+      {
+        type: "input",
+        name: "employeeRole",
+        message: "Enter the role id name!"
+      },
+      {
+        type: "input",
+        name: "employeeManager",
+        message: "Enter the employee manager name!"
       }
     ])
   //   using mysql2 line to insert new employee into tracker.employee table;
-  .then(function (answer) {
-  db.query('INSERT INTO employee (name) VALUES (?)', [answer.employeeName],
-  function (err, results) {
-    console.table(results);
-    mainPrompt();
-  })
-})
+  .then(function (answers) {
+    db.query('INSERT INTO employee (first_name, last_name, role_id,manager_id) VALUES (?, ?, ?, ?)', [answers.employeeName, answers.employeeLastName, answers.employeeRole, answers.employeeManager],
+    function (err, results) {
+      console.log(`${answers.employeeName} has been added to the list.`);
+      if(err){
+        console.log(err);
+      };
+      mainPrompt();
+    });
+});
 };
