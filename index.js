@@ -111,7 +111,6 @@ function addDepartment(){
     .then(function (answer) {
     db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName],
     function (err, results) {
-      console.table(results);
       if(err){
         console.log(err);
       };
