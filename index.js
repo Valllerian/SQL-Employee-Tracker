@@ -28,7 +28,7 @@ const db = mysql.createConnection(
 mainPrompt();
 
 function mainPrompt() {
-
+    // prompting a user to select a choice: 
     return inquirer.prompt([
       {
           type: "list",
@@ -37,18 +37,42 @@ function mainPrompt() {
           choices: ["View all departments", "View all roles", "View all employees", "Add department", "Add role", "Add employee", "Update Employee Role"]
       }
     ])
-   
+    // depending on the selection, invoking a view\add function;
     .then((answers) => {
         if (answers.displayOptions === "View all departments"){
             viewAllDepartments();
+        };
+        if (answers.displayOptions === "View all roles"){
+            viewAllRoles();
+        };
+        if (answers.displayOptions === "View all employees"){
+            viewAllEmployees();
         }
      })
 };
 
-// write function for each selections;
+// write function for each prompt;
 
+// View all departments from tracker.department table;
 function viewAllDepartments(){
     db.query('SELECT * FROM tracker_db.department;', function (err, results) {
+      console.table(results);
+      mainPrompt();
+    });
+  };
+
+// View all employees from tracker.employee table;
+function viewAllEmployees(){
+    db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+      console.table(results);
+      mainPrompt();
+    });
+  };
+
+// View all roles from tracker.role table;
+function viewAllRoles(){
+    db.query('SELECT * FROM tracker_db.role;', 
+    function (err, results) {
       console.table(results);
       mainPrompt();
     });
