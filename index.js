@@ -79,19 +79,19 @@ function viewAllDepartments(){
 
 // View all employees from tracker.employee table;
 function viewAllEmployees(){
-    db.query('SELECT id, first_name, last_name, role_id FROM tracker_db.employee;', 
+    db.query('SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name, roles.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN roles on employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id' , 
     function (err, results) {
       console.table(results);
       if(err){
         console.log(err);
-      };
+      }; 
       mainPrompt();
     });
   };
 
 // View all roles from tracker.role table;
 function viewAllRoles(){
-    db.query("SELECT id, title, salary, department_id FROM tracker_db.roles;", function (err, results) {
+    db.query("SELECT roles.id, roles.title, department.name AS department, roles.salary FROM roles LEFT JOIN department on roles.department_id = department.id;", function (err, results) {
       console.table(results);
       if(err){
         console.log(err);
@@ -114,7 +114,7 @@ function addDepartment(){
     .then(function (answer) {
     db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName],
     function (err, results) {
-      console.log(`${answers.departmentName} has been added to the department list.`);
+      console.log(`${answer.departmentName} has been added to the department list.`);
       if(err){
         console.log(err);
       };
@@ -125,6 +125,9 @@ function addDepartment(){
 
 //   add a new role to the tracker.role table;
 function addRole(){
+  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
+    let roles = [];
+    results.forEach(results => roles.push({name: results.title})); 
     return inquirer.prompt([
         // prompting the user to enter the role info;
         {
@@ -140,9 +143,9 @@ function addRole(){
         {
           type: "input",
           name: "roleDepartment",
-          message: "Enter the role department! (Reference Department ID)"
+          choice: roles
       }
-      ])
+      ])})
     //   using mysql2 line to insert new role into tracker.role table;
     .then(function (answers) {
     db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [answers.roleTitle, answers.roleSalary, answers.roleDepartment],
@@ -194,7 +197,7 @@ function addEmployee(){
 };
 
 function updateEmployeeRole(){
-
+// Selecting all employees;
   db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
 let staff = [];
   results.forEach(results => staff.push({name: results.first_name})); 
@@ -203,11 +206,13 @@ let staff = [];
       type: "list",
       name: "employeeName",
       message: "Select an employee.",
+      // returning an array with all employees;
       choices: staff
     },
   ])
   .then((answer) => {
   let employeeName = answer.employeeName;
+  // selecting all roles;
   db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
 let roles = [];
   results.forEach(results => roles.push({name: results.title, value: results.id}));
@@ -216,11 +221,13 @@ let roles = [];
       type: "list",
       name: "updateRole",
       message: "Select employees new role!",
+      // returning all roles;
       choices: roles
     },
   ])
   .then((answer) => {
     let roleName = answer.updateRole; 
+    // setting a new role for an employee;
     db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], function (err, results) {
       console.log(`${employeeName}'s role has been updated`);
       mainPrompt();

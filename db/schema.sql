@@ -44,5 +44,3 @@ CREATE TABLE employee (
   REFERENCES employee(id)
   ON DELETE SET NULL
 );
-
--- When we delete a Driver, make sure to also delete the associated License.CASCADE
