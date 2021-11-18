@@ -34,19 +34,25 @@ function mainPrompt() {
           type: "list",
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
-          choices: ["View all departments", "View all roles", "View all employees", "Add department", "Add role", "Add employee", "Update Employee Role"]
+          choices: ["View all departments;", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;"]
       }
     ])
     // depending on the selection, invoking a view\add function;
     .then((answers) => {
-        if (answers.displayOptions === "View all departments"){
+        if (answers.displayOptions === "View all departments;"){
             viewAllDepartments();
         };
-        if (answers.displayOptions === "View all roles"){
+        if (answers.displayOptions === "View all roles;"){
             viewAllRoles();
         };
-        if (answers.displayOptions === "View all employees"){
+        if (answers.displayOptions === "View all employees;"){
             viewAllEmployees();
+        };
+        if (answers.displayOptions === "Add department;"){
+            addDepartment();
+        };
+        if (answers.displayOptions === "Add role;"){
+            addRole();
         }
      })
 };
@@ -77,3 +83,43 @@ function viewAllRoles(){
       mainPrompt();
     });
   };
+
+//   add a new department to the tracker.department table;
+function addDepartment(){
+    return inquirer.prompt([
+        // prompting the user to enter the department name;
+        {
+            type: "input",
+            name: "departmentName",
+            message: "Enter the department name!"
+        }
+      ])
+    //   using mysql2 line to insert new department into tracker.department table;
+    .then(function (answer) {
+    db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName],
+    function (err, results) {
+      console.table(results);
+      mainPrompt();
+    })
+})
+};
+
+//   add a new role to the tracker.role table;
+function addRole(){
+    return inquirer.prompt([
+        // prompting the user to enter the role name;
+        {
+            type: "input",
+            name: "roleName",
+            message: "Enter the role name!"
+        }
+      ])
+    //   using mysql2 line to insert new role into tracker.role table;
+    .then(function (answer) {
+    db.query('INSERT INTO role (name) VALUES (?)', [answer.roleName],
+    function (err, results) {
+      console.table(results);
+      mainPrompt();
+    })
+})
+};
