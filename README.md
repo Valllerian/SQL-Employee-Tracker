@@ -24,8 +24,28 @@ A command-line application built from scratch to manage a company's employee dat
 ## Usage 
     
 - Run the app by entering:  `node index.js`;
-- Select the desired action;
+
+<br>
+<img alt="Main Menu" src="assets/images/image01.jpg" />
+<br>
+
+- Select the desired action and follow the prompts;
+
+<br>
+<img alt="Selecting choices" src="assets/images/image02.jpg" />
+<br>
+
 - Enter database through inquirer prompts to view companies stuff info.
+
+<br>
+<img alt="Viewing db" src="assets/images/image03.jpg" />
+<br>
+
+- Exit the application;
+
+<br>
+<img alt="Exiting" src="assets/images/image04.jpg" />
+<br>
 
 
 <h3>Application`s usage video-walkthrough:</h3>
