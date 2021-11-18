@@ -49,7 +49,7 @@ A command-line application built from scratch to manage a company's employee dat
 
 
 <h3>Application`s usage video-walkthrough:</h3>
-<a href="https://youtu.be/V2cajz8K5wo" target="_blank">Watch on YouTube</a>
+<a href="https://youtu.be/KwzzK5tXUDM" target="_blank">Watch on YouTube</a>
 
 ## License
     
