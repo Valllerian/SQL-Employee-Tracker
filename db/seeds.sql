@@ -1,12 +1,12 @@
 INSERT INTO department (name)
-VALUES (Marketing),
-(Operations),
-(Finance),
-(Sales),
-(HR),
-(Purchase);
+VALUES ("Marketing"),
+("Operations"),
+("Finance"),
+("Sales"),
+("HR"),
+("Purchase");
 
-INSERT INTO role (id,title,salary,department_id)
+INSERT INTO roles (id,title,salary,department_id)
 VALUES (001, "CEO","650000",2),
 (002, "Finance Director","350000",3),
 (003, "Program Director","350000",4),

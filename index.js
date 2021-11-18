@@ -1,7 +1,7 @@
 
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const cTable = require('console.table');
+const ctable = require('console.table');
 
 require('dotenv').config();
 
@@ -15,7 +15,6 @@ const db = mysql.createConnection(
       database: process.env.DB_NAME
     }
   );
-
   db.connect( (err) => {
     if (err){
       throw error;
@@ -34,24 +33,24 @@ function mainPrompt() {
           type: "list",
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
-          choices: ["View all departments;", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;"]
+          choices: ["View all departments", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;"]
       }
     ])
     // depending on the selection, invoking a view\add function;
     .then((answers) => {
-        if (answers.displayOptions === "View all departments;"){
+        if (answers.displayAll === "View all departments"){
             viewAllDepartments();
         };
-        if (answers.displayOptions === "View all roles;"){
+        if (answers.displayAll === "View all roles;"){
             viewAllRoles();
         };
-        if (answers.displayOptions === "View all employees;"){
+        if (answers.displayAll === "View all employees;"){
             viewAllEmployees();
         };
-        if (answers.displayOptions === "Add department;"){
+        if (answers.displayAll === "Add department;"){
             addDepartment();
         };
-        if (answers.displayOptions === "Add role;"){
+        if (answers.displayAll === "Add role;"){
             addRole();
         }
      })
@@ -61,7 +60,8 @@ function mainPrompt() {
 
 // View all departments from tracker.department table;
 function viewAllDepartments(){
-    db.query('SELECT * FROM tracker_db.department;', function (err, results) {
+    db.query('SELECT * FROM tracker_db.department;', 
+    function (err, results) {
       console.table(results);
       mainPrompt();
     });
@@ -69,7 +69,8 @@ function viewAllDepartments(){
 
 // View all employees from tracker.employee table;
 function viewAllEmployees(){
-    db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+    db.query('SELECT * FROM tracker_db.employee;', 
+    function (err, results) {
       console.table(results);
       mainPrompt();
     });

@@ -5,7 +5,10 @@
   "main": "index.js",
   "dependencies": {
     "console.table": "^0.10.0",
-    "inquirer": "^8.2.0"
+    "ctable": "0.0.3",
+    "dotenv": "^10.0.0",
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.3"
   },
   "devDependencies": {},
   "scripts": {
