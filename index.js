@@ -100,7 +100,7 @@ function viewAllRoles(){
 //   add a new department to the tracker.department table;
 function addDepartment(){
     return inquirer.prompt([
-        // prompting the user to enter the department name;
+        // prompting the user to enter the department info;
         {
             type: "input",
             name: "departmentName",
@@ -111,6 +111,7 @@ function addDepartment(){
     .then(function (answer) {
     db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName],
     function (err, results) {
+      console.log(`${answers.departmentName} has been added to the department list.`);
       if(err){
         console.log(err);
       };
@@ -122,7 +123,7 @@ function addDepartment(){
 //   add a new role to the tracker.role table;
 function addRole(){
     return inquirer.prompt([
-        // prompting the user to enter the role name;
+        // prompting the user to enter the role info;
         {
             type: "input",
             name: "roleTitle",
@@ -143,7 +144,7 @@ function addRole(){
     .then(function (answers) {
     db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [answers.roleTitle, answers.roleSalary, answers.roleDepartment],
     function (err, results) {
-      console.log(`${answers.roleTitle} has been added to the list.`);
+      console.log(`${answers.roleTitle} has been added to the role list.`);
       if(err){
         console.log(err);
       };
@@ -154,7 +155,7 @@ function addRole(){
 
 function addEmployee(){
   return inquirer.prompt([
-      // prompting the user to enter the employee name;
+      // prompting the user to enter the employee info;
       {
           type: "input",
           name: "employeeName",
@@ -168,7 +169,7 @@ function addEmployee(){
       {
         type: "input",
         name: "employeeRole",
-        message: "Enter the role id name!"
+        message: "Enter the role id!"
       },
       {
         type: "input",
