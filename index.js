@@ -73,6 +73,9 @@ function viewAllDepartments(){
     db.query('SELECT * FROM tracker_db.department;', 
     function (err, results) {
       console.table(results);
+      if(err){
+        console.log(err);
+      }; 
       mainPrompt();
     });
   };
@@ -256,6 +259,9 @@ let roles = [];
     // setting a new role for an employee;
     db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], function (err, results) {
       console.log(`${employeeName}'s role has been updated`);
+      if(err){
+        console.log(err);
+      }; 
       mainPrompt();
     });
   });
