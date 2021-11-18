@@ -161,8 +161,12 @@ function addRole(){
 });
 };
 
+
 function addEmployee(){
-  return inquirer.prompt([
+  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
+    let roles = [];
+    results.forEach(results => roles.push({name: results.title, value: results.id})); 
+    return inquirer.prompt([
       // prompting the user to enter the employee info;
       {
           type: "input",
@@ -175,26 +179,47 @@ function addEmployee(){
         message: "Enter the employee last name!"
       },
       {
-        type: "input",
+        type: "list",
         name: "employeeRole",
-        message: "Enter the role id!"
-      },
-      {
-        type: "input",
-        name: "employeeManager",
-        message: "Enter the employee manager name!"
+        message: "Select the role !",
+        choices: roles
       }
     ])
-  //   using mysql2 line to insert new employee into tracker.employee table;
+   
   .then(function (answers) {
-    db.query('INSERT INTO employee (first_name, last_name, role_id,manager_id) VALUES (?, ?, ?, ?)', [answers.employeeName, answers.employeeLastName, answers.employeeRole, answers.employeeManager],
-    function (err, results) {
-      console.log(`${answers.employeeName} has been added to the list.`);
-      if(err){
-        console.log(err);
-      };
-      mainPrompt();
-    });
+    // saving new employee info;
+      let newName = answers.employeeName;
+      let newLastName = answers.employeeLastName;
+      let newRole = answers.employeeRole;
+    // Selecting all employees to input a manager;
+  db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+      let employeeName = [];
+      results.forEach(result => employeeName.push({ name: result.first_name + ' ' + result.last_name, value: result.id}));
+    // a prompt for a manager selection;
+  return inquirer.prompt([
+      {
+        type: "list",
+        name: "manager",
+        message: "Select the manager.",
+        choices: employeeName
+      },
+  ])
+
+  .then((answers) => {
+    // saving a manager;
+  let manager = answers.manager;
+    // Inserting new employee to the database;
+  db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [newName, newLastName, newRole, manager], 
+      function (err, results) {
+        console.log(`${newName} has been added to the employee list.`);
+        if(err){
+          console.log(err);
+        };
+        mainPrompt()
+      });
+  });
+  });
+  });
 });
 };
 
