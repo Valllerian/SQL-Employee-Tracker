@@ -94,7 +94,8 @@ function viewAllEmployees(){
 
 // View all roles from tracker.role table;
 function viewAllRoles(){
-    db.query("SELECT roles.id, roles.title, department.name AS department, roles.salary FROM roles LEFT JOIN department on roles.department_id = department.id;", function (err, results) {
+    db.query("SELECT roles.id, roles.title, department.name AS department, roles.salary FROM roles LEFT JOIN department on roles.department_id = department.id;", 
+    function (err, results) {
       console.table(results);
       if(err){
         console.log(err);
@@ -128,7 +129,8 @@ function addDepartment(){
 
 //   add a new role to the tracker.role table;
 function addRole(){
-  db.query('SELECT * FROM tracker_db.department;', function (err, results) {
+  db.query('SELECT * FROM tracker_db.department;', 
+  function (err, results) {
     let departments = [];
     results.forEach(results => departments.push({name: results.name, value: results.id})); 
     return inquirer.prompt([
@@ -165,7 +167,8 @@ function addRole(){
 };
 
 function addEmployee(){
-  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
+  db.query('SELECT * FROM tracker_db.roles;', 
+  function (err, results) {
     let roles = [];
     results.forEach(results => roles.push({name: results.title, value: results.id})); 
     return inquirer.prompt([
@@ -194,7 +197,8 @@ function addEmployee(){
       let newLastName = answers.employeeLastName;
       let newRole = answers.employeeRole;
     // Selecting all employees to input a manager;
-  db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+  db.query('SELECT * FROM tracker_db.employee;', 
+  function (err, results) {
       let employeeName = [];
       results.forEach(result => employeeName.push({ name: result.first_name + ' ' + result.last_name, value: result.id}));
     // a prompt for a manager selection;
@@ -227,7 +231,8 @@ function addEmployee(){
 
 function updateEmployeeRole(){
 // Selecting all employees;
-  db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+  db.query('SELECT * FROM tracker_db.employee;', 
+  function (err, results) {
 let staff = [];
   results.forEach(results => staff.push({name: results.first_name})); 
   return inquirer.prompt([
@@ -242,7 +247,8 @@ let staff = [];
   .then((answer) => {
   let employeeName = answer.employeeName;
   // selecting all roles;
-  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
+  db.query('SELECT * FROM tracker_db.roles;', 
+  function (err, results) {
 let roles = [];
   results.forEach(results => roles.push({name: results.title, value: results.id}));
     return inquirer.prompt([
@@ -257,7 +263,8 @@ let roles = [];
   .then((answer) => {
     let roleName = answer.updateRole; 
     // setting a new role for an employee;
-    db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], function (err, results) {
+    db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], 
+    function (err, results) {
       console.log(`${employeeName}'s role has been updated`);
       if(err){
         console.log(err);
