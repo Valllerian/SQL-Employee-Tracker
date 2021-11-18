@@ -34,7 +34,7 @@ function mainPrompt() {
           type: "list",
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
-          choices: ["View all departments", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;", "Exit"]
+          choices: ["View all departments", "Add department;", "View all roles;", "Add role;", "View all employees;", "Add employee;", "Update Employee Role;", "Exit"]
       }
     ])
     // depending on the selection, invoking a view\add function;
@@ -160,7 +160,6 @@ function addRole(){
   })
 });
 };
-
 
 function addEmployee(){
   db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
