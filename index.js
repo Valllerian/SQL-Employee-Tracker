@@ -34,7 +34,7 @@ function mainPrompt() {
           type: "list",
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
-          choices: ["View all departments", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;"]
+          choices: ["View all departments", "View all roles;", "View all employees;", "Add department;", "Add role;", "Add employee;", "Update Employee Role;", "Exit"]
       }
     ])
     // depending on the selection, invoking a view\add function;
@@ -60,6 +60,9 @@ function mainPrompt() {
         if (answers.displayAll === "Update Employee Role;"){
           updateEmployeeRole();
         };
+        if (answers.displayAll === "Exit"){
+          exit();
+        };
      });
 };
 
@@ -76,7 +79,7 @@ function viewAllDepartments(){
 
 // View all employees from tracker.employee table;
 function viewAllEmployees(){
-    db.query('SELECT id, first_name, last_name FROM tracker_db.employee;', 
+    db.query('SELECT id, first_name, last_name, role_id FROM tracker_db.employee;', 
     function (err, results) {
       console.table(results);
       if(err){
@@ -189,3 +192,48 @@ function addEmployee(){
     });
 });
 };
+
+function updateEmployeeRole(){
+
+  db.query('SELECT * FROM tracker_db.employee;', function (err, results) {
+let staff = [];
+  results.forEach(results => staff.push({name: results.first_name})); 
+  return inquirer.prompt([
+    {
+      type: "list",
+      name: "employeeName",
+      message: "Select an employee.",
+      choices: staff
+    },
+  ])
+  .then((answer) => {
+  let employeeName = answer.employeeName;
+  db.query('SELECT * FROM tracker_db.roles;', function (err, results) {
+let roles = [];
+  results.forEach(results => roles.push({name: results.title, value: results.id}));
+    return inquirer.prompt([
+    {
+      type: "list",
+      name: "updateRole",
+      message: "Select employees new role!",
+      choices: roles
+    },
+  ])
+  .then((answer) => {
+    let roleName = answer.updateRole; 
+    db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], function (err, results) {
+      console.log(`${employeeName}'s role has been updated`);
+      mainPrompt();
+    });
+  });
+});
+});
+});
+};
+
+function exit(){
+  console.log("Goodbye!");
+  // https://www.codegrepper.com/code-examples/javascript/kill+process+node+js
+  // how to kill process;
+  process.kill(process.pid, 'SIGINT');
+}
