@@ -34,7 +34,8 @@ function mainPrompt() {
           type: "list",
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
-          choices: ["View all departments", "Add department;", "View all roles;", "Add role;", "View all employees;", "Add employee;", "Update Employee Role;", "Exit"]
+          // work on "View employees by manager", "View employees by department","Get budget", "Delete","Update employee manager";
+          choices: ["View all departments", "Add department;", "View all roles;", "Add role;",  "View all employees;", "Add employee;", "Delete", "Update employee role;", "Exit"]
       }
     ])
     // depending on the selection, invoking a view\add function;
@@ -42,6 +43,21 @@ function mainPrompt() {
         if (answers.displayAll === "View all departments"){
             viewAllDepartments();
         };
+        // if (answers.displayAll === "View employees by manager"){
+        //   viewEmployeeByManager();
+        // };
+        // if (answers.displayAll === "View employees by department"){
+        //   viewEmployeeByDepartment();
+        // };
+        // if (answers.displayAll === "Update employee manager"){
+        //   updateEmployeeManager();
+        // };
+        if (answers.displayAll === "Delete"){
+          Delete();
+        };
+        // if (answers.displayAll === "Get budget"){
+        //   getBudget();
+        // };
         if (answers.displayAll === "View all roles;"){
             viewAllRoles();
         };
@@ -104,6 +120,148 @@ function viewAllRoles(){
     });
   };
 
+  // Bonus:
+//  function viewEmployeeByManager();
+//  function viewEmployeeByDepartment();
+//  function viewEmployeeByManager();
+//  function updateEmployeeManager();
+
+
+//  function deleteDepartment();
+//  function deleteRole();
+
+//  function getBudget();
+
+// exit prompt to let the user an ability to finish the process;
+function exitPrompt() {
+  let responses = ["Yes", "No"]
+  return inquirer.prompt([
+    {
+        type: "list",
+        name: "response",
+        message: "Would you like to go back to main menu?",
+        choices: responses
+    },
+]).then (function(answer){
+  if( answer.response === "Yes"){
+    mainPrompt();
+  };
+  if( answer.response === "No"){
+    console.log("Goodbye!")
+    process.exit();
+  };
+})
+}
+
+// adding a delete prompt;
+ function Delete(){
+   let deleteOptions = ["Role", "Department", "Employee" ];
+   return inquirer.prompt([
+    // prompting the user to enter the department info;
+    {
+        type: "list",
+        name: "deleteChoice",
+        message: "Select what you want to delete!",
+        choices: deleteOptions
+    }
+  ]).then (function (answer){
+    if( answer.deleteChoice === "Role"){
+      deleteRole();
+    };
+    if( answer.deleteChoice === "Department"){
+      deleteDepartment();
+    };
+    if( answer.deleteChoice === "Employee"){
+      deleteEmployee();
+    };
+    
+  })
+ };
+
+//  deleting Role;
+ function deleteRole(){
+  db.query('SELECT * FROM tracker_db.roles;',  
+  function (err, results){
+  let roles = [];
+  results.forEach(result => roles.push({name: result.title, value: result.id}));
+    return inquirer.prompt([
+      {
+          type: "list",
+          name: "deletedRole",
+          message: "Select the role!",
+          choices: roles
+      },
+    ]).then((answer) => {
+    let role = answer.deleteRole;
+    db.query('DELETE FROM roles WHERE id = ?', [role], 
+    function (err, results) {
+      if(err){
+          console.log(err);
+      };
+          console.log("Role has been deleted!");
+          exitPrompt();
+      });
+  });
+  });
+};
+
+  // deleting Employee
+ function deleteEmployee(){
+  db.query('SELECT * FROM tracker_db.employee;', 
+  function (err, results) {
+  let employees = [];
+  results.forEach(result => employees.push({name: result.first_name + ' ' + result.last_name, value: result.id}));
+  return inquirer.prompt([
+      {
+          type: "list",
+          name: "deleteEmployee",
+          message: "Select an employee to delete!",
+          choices: employees
+      },
+  ])
+  .then((answer) => {
+  let deletedEmployee = answer.deleteEmployee;
+
+  db.query('DELETE FROM tracker_db.employee WHERE id = ?', [deletedEmployee], 
+  function (err, results) {
+      if(err){
+          console.log(err);
+      };
+          console.log("Employee was successfully deleted!");
+          exitPrompt();
+      
+      });
+  });
+  });
+ };
+
+//  deleting department;
+function deleteDepartment(){
+  db.query('SELECT * FROM tracker_db.department;', 
+  function (err, results)  {
+  let departments = [];
+  results.forEach(result => departments.push({name: result.name, value: result.id}));
+  return inquirer.prompt([
+      {
+          type: "list",
+          name: "deletedDepartment",
+          message: 'Which department would you like to delete?',
+          choices: departments
+      },
+      ]).then((answer) => { 
+  let departmentId = answer.deletedDepartment;
+  db.query('DELETE FROM department WHERE id = ?', [departmentId], 
+  function (err, results)  {
+      if(err){
+        console.log(err);
+      };
+      console.log(`Department has been deleted!`)
+        exitPrompt(); 
+      });
+  });
+  });
+};
+
 //   add a new department to the tracker.department table;
 function addDepartment(){
     return inquirer.prompt([
@@ -162,7 +320,7 @@ function addRole(){
       };
       mainPrompt();
     });
-  })
+  });
 });
 };
 
@@ -277,9 +435,11 @@ let roles = [];
 });
 };
 
+
 function exit(){
   console.log("Goodbye!");
   // https://www.codegrepper.com/code-examples/javascript/kill+process+node+js
   // how to kill process;
+  // or process.exit();
   process.kill(process.pid, 'SIGINT');
 }
