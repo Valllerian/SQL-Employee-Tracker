@@ -35,7 +35,7 @@ function mainPrompt() {
           name: "displayAll",
           message: "Hello! Please, select what you would to do.",
           // work on "View employees by manager", "View employees by department","Get budget", "Delete","Update employee manager";
-          choices: ["View all departments", "Add department;", "View all roles;", "Add role;",  "View all employees;", "Add employee;", "Delete", "Update employee role;", "Exit"]
+          choices: ["View all departments", "Add department;", "View all roles;", "Add role;",  "View all employees;", "Add employee;", "Get budget", "Delete", "Update employee role;", "Exit"]
       }
     ])
     // depending on the selection, invoking a view\add function;
@@ -55,9 +55,9 @@ function mainPrompt() {
         if (answers.displayAll === "Delete"){
           Delete();
         };
-        // if (answers.displayAll === "Get budget"){
-        //   getBudget();
-        // };
+        if (answers.displayAll === "Get budget"){
+          getBudget();
+        };
         if (answers.displayAll === "View all roles;"){
             viewAllRoles();
         };
@@ -126,11 +126,31 @@ function viewAllRoles(){
 //  function viewEmployeeByManager();
 //  function updateEmployeeManager();
 
-
-//  function deleteDepartment();
-//  function deleteRole();
-
-//  function getBudget();
+ function getBudget(){
+   db.query("SELECT * FROM tracker_db.department;", 
+   function(err, results){
+   let departments = [];
+   results.forEach(result => departments.push({name: result.name, value: result.id}));
+   return inquirer.prompt([
+    {
+        type: "list",
+        name: "departmentSelect",
+        message: "Select a department!",
+        choices: departments
+    },
+    ]).then(function(answer){
+    let departmentId = answer.departmentSelect;
+    db.query('SELECT SUM(roles.salary) AS department_budget from employee JOIN roles ON employee.role_id = roles.id WHERE roles.department_id = ?', [departmentId], 
+    function (err, results) {
+      if(err){
+        console.log(err);
+      };
+      console.table(results)
+      exitPrompt(); ;
+    });
+    });
+   });
+ };
 
 // exit prompt to let the user an ability to finish the process;
 function exitPrompt() {
@@ -191,7 +211,7 @@ function exitPrompt() {
           message: "Select the role!",
           choices: roles
       },
-    ]).then((answer) => {
+    ]).then(function (answer)  {
     let role = answer.deleteRole;
     db.query('DELETE FROM roles WHERE id = ?', [role], 
     function (err, results) {
@@ -219,7 +239,7 @@ function exitPrompt() {
           choices: employees
       },
   ])
-  .then((answer) => {
+  .then(function (answer)  {
   let deletedEmployee = answer.deleteEmployee;
 
   db.query('DELETE FROM tracker_db.employee WHERE id = ?', [deletedEmployee], 
@@ -237,7 +257,7 @@ function exitPrompt() {
 
 //  deleting department;
 function deleteDepartment(){
-  db.query('SELECT * FROM tracker_db.department;', 
+  db.query("SELECT * FROM tracker_db.department;", 
   function (err, results)  {
   let departments = [];
   results.forEach(result => departments.push({name: result.name, value: result.id}));
@@ -248,7 +268,7 @@ function deleteDepartment(){
           message: 'Which department would you like to delete?',
           choices: departments
       },
-      ]).then((answer) => { 
+      ]).then(function(answer) { 
   let departmentId = answer.deletedDepartment;
   db.query('DELETE FROM department WHERE id = ?', [departmentId], 
   function (err, results)  {
@@ -369,7 +389,7 @@ function addEmployee(){
       },
   ])
 
-  .then((answers) => {
+  .then(function (answers)  {
     // saving a manager;
   let manager = answers.manager;
     // Inserting new employee to the database;
@@ -402,7 +422,7 @@ let staff = [];
       choices: staff
     },
   ])
-  .then((answer) => {
+  .then(function (answer)  {
   let employeeName = answer.employeeName;
   // selecting all roles;
   db.query('SELECT * FROM tracker_db.roles;', 
@@ -418,7 +438,7 @@ let roles = [];
       choices: roles
     },
   ])
-  .then((answer) => {
+  .then(function (answer) {
     let roleName = answer.updateRole; 
     // setting a new role for an employee;
     db.query('UPDATE tracker_db.employee SET role_id = ? WHERE first_name = ?', [roleName, employeeName], 
