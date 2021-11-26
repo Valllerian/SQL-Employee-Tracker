@@ -121,7 +121,6 @@ function viewAllRoles(){
   };
 
   // Bonus:
-//  function viewEmployeeByManager();
 //  function viewEmployeeByDepartment();
 //  function viewEmployeeByManager();
 //  function updateEmployeeManager();
@@ -177,7 +176,7 @@ function exitPrompt() {
  function Delete(){
    let deleteOptions = ["Role", "Department", "Employee" ];
    return inquirer.prompt([
-    // prompting the user to enter the department info;
+    // prompting the user to enter the delete info;
     {
         type: "list",
         name: "deleteChoice",
@@ -200,6 +199,7 @@ function exitPrompt() {
 
 //  deleting Role;
  function deleteRole(){
+  //  select all from roles table;
   db.query('SELECT * FROM tracker_db.roles;',  
   function (err, results){
   let roles = [];
@@ -213,6 +213,7 @@ function exitPrompt() {
       },
     ]).then(function (answer)  {
     let role = answer.deleteRole;
+    // deleting selected role from roles;
     db.query('DELETE FROM roles WHERE id = ?', [role], 
     function (err, results) {
       if(err){
@@ -227,6 +228,7 @@ function exitPrompt() {
 
   // deleting Employee
  function deleteEmployee(){
+   //  select all from employee table;
   db.query('SELECT * FROM tracker_db.employee;', 
   function (err, results) {
   let employees = [];
@@ -242,6 +244,7 @@ function exitPrompt() {
   .then(function (answer)  {
   let deletedEmployee = answer.deleteEmployee;
 
+  // deleting selected employee from roles;
   db.query('DELETE FROM tracker_db.employee WHERE id = ?', [deletedEmployee], 
   function (err, results) {
       if(err){
@@ -257,6 +260,7 @@ function exitPrompt() {
 
 //  deleting department;
 function deleteDepartment(){
+  //  select all from department table;
   db.query("SELECT * FROM tracker_db.department;", 
   function (err, results)  {
   let departments = [];
@@ -270,6 +274,7 @@ function deleteDepartment(){
       },
       ]).then(function(answer) { 
   let departmentId = answer.deletedDepartment;
+  // deleting selected department from roles;
   db.query('DELETE FROM department WHERE id = ?', [departmentId], 
   function (err, results)  {
       if(err){
